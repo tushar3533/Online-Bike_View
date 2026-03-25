@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Bike Portal</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* ===== Login Popup CSS ===== */
+.popup {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+}
+
+.popup-box {
+background: #fff;
+width: 320px;
+margin: 100px auto;
+padding: 20px;
+border-radius: 8px;
+position: relative;
+}
+
+.popup-box h2 {
+text-align: center;
+margin-bottom: 15px;
+}
+
+.popup-box input {
+width: 100%;
+padding: 10px;
+margin: 8px 0;
+}
+
+.popup-box button {
+width: 100%;
+padding: 10px;
+background: #ff5a5f;
+color: white;
+border: none;
+cursor: pointer;
+margin-top: 10px;
+}
+
+.close-btn {
+position: absolute;
+top: 10px;
+right: 15px;
+cursor: pointer;
+font-size: 18px;
+color: red;
+}
+
+.switch {
+text-align: center;
+margin-top: 10px;
+cursor: pointer;
+color: blue;
+}
+
+/* search options */
+#brandOptions, #budgetOptions{
+margin-top:15px;
+}
+
+#budgetSlider{
+width:80%;
+}
+/* ============================= */
+/* DARK SPOTLIGHT SECTION STYLE  */
+/* ============================= */
+.spotlight-section{
+    background:#0f0f0f;
+    padding:60px 40px;
+}
+
+.spotlight-section h2{
+    color:white;
+    text-align:center;
+    font-size:32px;
+    margin-bottom:40px;
+    letter-spacing:1px;
+}
+
+.spotlight-frame{
+    max-width:1300px;
+    margin:auto;
+    background:linear-gradient(135deg,#ee6129,#ff7a18);
+    padding:40px;
+    border-radius:20px;
+}
+
+.bike-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:30px;
+}
+
+/* CARD */
+.bike-card{
+    background:#1b1b1b;
+    border-radius:15px;
+    padding:20px;
+    text-align:center;
+    transition:0.3s;
+    box-shadow:0 5px 20px rgba(0,0,0,0.5);
+}
+
+.bike-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 10px 30px rgba(255,0,0,0.3);
+}
+
+/* IMAGE */
+.bike-card img{
+    width:100%;
+    height:160px;
+    object-fit:contain;
+    background:black;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+/* TEXT */
+.bike-card h3{
+    color:white;
+    font-size:18px;
+    margin-bottom:5px;
+}
+
+.bike-card p{
+    color:#ff4d30;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+/* BUTTON */
+.offer-btn{
+    padding:10px 20px;
+    border-radius:6px;
+    border:2px solid #ff4d30;
+    background:transparent;
+    color:#ff4d30;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight:600;
+}
+
+.offer-btn:hover{
+    background:#ff4d30;
+    color:white;
+}
+
+
+/* ========================= */
+/* SIDE CIRCLE IMAGES */
+/* ========================= */
+
+.side-images{
+    position:fixed;
+    top:120px;
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+    z-index:10;
+}
+
+.left-side{
+    left:20px;
+}
+
+.right-side{
+    right:20px;
+}
+
+.side-images img{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #ff4d30;
+    cursor:pointer;
+    transition:0.4s;
+    box-shadow:0 0 10px rgba(255,77,48,0.4);
+}
+
+/* HOVER EFFECT */
+.side-images img:hover{
+    transform:scale(1.2);
+    box-shadow:0 0 25px #ff4d30;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<div class="logo">
+<span>🏍</span>
+<span>BikePortal</span>
+</div>
+
+<div class="search-container">
+<input type="text" placeholder="🏍️𝐎𝐍𝐋𝐈𝐍𝐄-𝐁𝐈𝐊𝐄-𝐕𝐈𝐄𝐖-𝐏𝐎𝐑𝐓𝐀𝐋🏍️">
+</div>
+
+<div class="nav-right">
+<div class="language">English ▼</div>
+<div class="login" onclick="openLogin()">👤 Login / Register</div>
+</div>
+
+</header>
+
+<!-- LOGIN POPUP -->
+
+<div class="popup" id="loginPopup">
+<div class="popup-box">
+<span class="close-btn" onclick="closePopup()">✖</span>
+<h2>Login</h2>
+<input type="text" placeholder="Username">
+<input type="password" placeholder="Password">
+<button>Login</button>
+<div class="switch" onclick="openRegister()">New user? Register</div>
+</div>
+</div>
+
+<!-- REGISTER POPUP -->
+
+<div class="popup" id="registerPopup">
+<div class="popup-box">
+<span class="close-btn" onclick="closePopup()">✖</span>
+<h2>Register</h2>
+<input type="text" placeholder="Username">
+<input type="email" placeholder="Email">
+<input type="password" placeholder="Password">
+<button>Register</button>
+<div class="switch" onclick="openLogin()">Already have account? Login</div>
+</div>
+</div>
+
+<section class="bike-section">
+<div class="bike-content-box">
+
+<h1>Find Your Perfect Bike</h1>
+
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="Search bikes by name, model...">
+<button onclick="searchBike()">Search</button>
+</div>
+
+<div class="search-options">
+<button onclick="showBrand()">Search by Brand</button>
+<button onclick="showBudget()">Search by Budget</button>
+</div>
+
+<!-- Brand Options -->
+
+<div id="brandOptions" class="brand-box">
+
+    <select id="brandSelect">
+        <option value="">Select Brand</option>
+        <option>Hero</option>
+        <option>Honda</option>
+        <option>Bajaj</option>
+        <option>TVS</option>
+        <option>Yamaha</option>
+        <option>Royal Enfield</option>
+    </select>
+
+    <button onclick="searchBrand()">Search</button>
+
+</div>
+
+<!-- Budget Slider -->
+
+<div id="budgetOptions" style="display:none;">
+<label>Budget: ₹<span id="budgetValue">50000</span></label><br>
+<input type="range" id="budgetSlider" min="50000" max="500000" step="10000" value="50000">
+<br><br>
+<button onclick="searchBudget()">Search</button>
+</div>
+
+</div>
+</section>
+
+<!-- bike side circle -->
+<div class="side-images left-side">
+    <a href="/brand/Yamaha">
+        <img src="{{ url_for('static', filename='images/yamahalogo.jpg') }}">
+    </a>
+
+    <a href="/brand/KTM">
+        <img src="{{ url_for('static', filename='images/ktmlogo.jpg') }}">
+    </a>
+
+    <a href="/brand/Royal Enfield">
+        <img src="{{ url_for('static', filename='images/relogo.jpg') }}">
+    </a>
+</div>
+
+<div class="side-images right-side">
+    <a href="/brand/Suzuki">
+        <img src="{{ url_for('static', filename='images/suzukilogo.jpg') }}">
+    </a>
+
+    <a href="/brand/TVS">
+        <img src="{{ url_for('static', filename='images/tvslogo.jpg') }}">
+    </a>
+
+    <a href="/brand/Benelli">
+        <img src="{{ url_for('static', filename='images/benelilogo.jpg') }}">
+    </a>
+</div>
+
+<!-- bike spotlight section -->
+<section class="spotlight-section">
+<h2>Bikes in Spotlight</h2>
+
+<div class="spotlight-frame">
+<div class="bike-cards">
+
+{% for bike in bikes %}
+<div class="bike-card">
+
+<img src="{{ url_for('static', filename='images/' ~ bike[4]) }}">
+
+<h3>{{ bike[1] }}</h3>
+
+<p>₹{{ bike[3] }} Onwards</p>
+
+<a href="/offer/{{ bike[0] }}">
+<button class="offer-btn">Get Offers</button>
+</a>
+
+</div>
+{% endfor %}
+
+</div>
+</div>
+</section>
+
+<script>
+
+/* popup */
+function openLogin(){
+document.getElementById("loginPopup").style.display="block";
+document.getElementById("registerPopup").style.display="none";
+}
+
+function openRegister(){
+document.getElementById("registerPopup").style.display="block";
+document.getElementById("loginPopup").style.display="none";
+}
+
+function closePopup(){
+document.getElementById("loginPopup").style.display="none";
+document.getElementById("registerPopup").style.display="none";
+}
+
+/* show brand */
+function showBrand(){
+document.getElementById("brandOptions").style.display="block";
+document.getElementById("budgetOptions").style.display="none";
+}
+
+/* show budget */
+function showBudget(){
+document.getElementById("budgetOptions").style.display="block";
+document.getElementById("brandOptions").style.display="none";
+}
+
+/* budget slider */
+let slider=document.getElementById("budgetSlider");
+let output=document.getElementById("budgetValue");
+
+slider.oninput=function(){
+output.innerHTML=this.value;
+}
+
+/* search bike */
+function searchBike(){
+let value=document.getElementById("searchInput").value;
+if(value!=""){
+window.location.href="/search?bike="+value;
+}
+}
+
+function searchBrand(){
+let brand=document.getElementById("brandSelect").value;
+
+if(brand!=""){
+window.location.href="/brand?brand="+brand;
+}
+}
+
+function searchBudget(){
+let budget=document.getElementById("budgetSlider").value;
+
+window.location.href="/budget?price="+budget;
+}
+
+</script>
+
+</body>
+</html>
